@@ -28,11 +28,11 @@ public class ControllerUser {
 
     @PostMapping
     EntityUser postUser(@RequestBody EntityUser user){
+        EntityUser userObject = repositoryUser.save(user);
         EntityWallet wallet = new EntityWallet();
         wallet.setBalance(0f);
+        wallet.setUserId(userObject.getId());
         repositoryWallet.save(wallet);
-        user.setWalletId(wallet.getId());
-        repositoryUser.save(user);
         return user;
     }
 }

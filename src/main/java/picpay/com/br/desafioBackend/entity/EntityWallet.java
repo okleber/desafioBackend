@@ -10,9 +10,7 @@ import lombok.Setter;
 public class EntityWallet {
     @Id
     @GeneratedValue
-    private Integer id;
-    private Float balance;
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(nullable = false)
-    private EntityUser entityUser;
+    private int id;
+    private float balance;
+    private int userId;
 }
