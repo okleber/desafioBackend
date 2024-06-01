@@ -7,6 +7,9 @@ import picpay.com.br.desafioBackend.entity.EntityWallet;
 import picpay.com.br.desafioBackend.repository.RepositoryUser;
 import picpay.com.br.desafioBackend.repository.RepositoryWallet;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @RestController
 @RequestMapping("/user")
 public class ControllerUser {
@@ -26,7 +29,7 @@ public class ControllerUser {
     @PostMapping
     EntityUser postUser(@RequestBody EntityUser user){
         EntityWallet wallet = new EntityWallet();
-        wallet.setBalance(0);
+        wallet.setBalance(0f);
         repositoryWallet.save(wallet);
         user.setWalletId(wallet.getId());
         repositoryUser.save(user);

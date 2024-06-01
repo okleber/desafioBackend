@@ -12,7 +12,7 @@ import java.util.Set;
 public class EntityUser {
     @Id
     @GeneratedValue
-    private int id;
+    private Integer id;
     private String name;
     @Column(unique = true)
     private String cpf;
@@ -20,6 +20,6 @@ public class EntityUser {
     private String mail;
     private String password;
     private String userType;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private Set<Integer> walletId;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Integer walletId;
 }
