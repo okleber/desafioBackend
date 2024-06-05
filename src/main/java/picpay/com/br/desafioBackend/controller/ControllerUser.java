@@ -11,6 +11,7 @@ import picpay.com.br.desafioBackend.entity.EntityWallet;
 import picpay.com.br.desafioBackend.repository.RepositoryUser;
 import picpay.com.br.desafioBackend.repository.RepositoryWallet;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -27,8 +28,15 @@ public class ControllerUser {
     }
 
     @GetMapping
-    Iterable<EntityUser> getUsers(){
-        return repositoryUser.findAll();
+    Optional<List<EntityUser>> getUsers(@RequestParam(value="cpf", required=false) String cpf){
+        if(cpf==null || cpf.isEmpty()){
+            return Optional.of(repositoryUser.findAll());
+        }
+        if (! usuarioComum.validaCpf(cpf)) return Optional.empty();
+        List<EntityUser> users=repositoryUser.findByCpf(cpf);
+        return users.isEmpty()?Optional.empty():Optional.of(users);
+
+
     }
 
     @PostMapping
@@ -41,9 +49,4 @@ public class ControllerUser {
         return user;
     }
 
-    @GetMapping("/byCpf")
-    Optional<EntityUser> getUsersByCpf(@RequestParam(value="cpf", required=false) String cpf){
-        if (! usuarioComum.validaCpf(cpf)) return Optional.empty();
-        return repositoryUser.findByCpf(cpf);
-    }
 }
