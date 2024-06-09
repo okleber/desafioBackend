@@ -11,9 +11,16 @@ public class UsuarioComum implements InterfaceUser {
     public float receiveMoney(float value, InterfaceUser user){
         return 0;
     }
-    public boolean validaCpf(String cpf){
+
+    public static String formatCpf(String cpfArg) {
         // Remove caracteres não numéricos
-        cpf = cpf.replaceAll("[^\\d]", "");
+        String cpf = cpfArg.replaceAll("[^\\d]", "");
+        return cpf;
+    }
+
+    public static boolean validateCpf(String cpfArg){
+        // Remove caracteres não numéricos
+        String cpf=UsuarioComum.formatCpf(cpfArg);
 
         // Verifica se o CPF tem 11 dígitos
         if (cpf.length() != 11) {

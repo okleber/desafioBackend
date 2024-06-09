@@ -1,11 +1,10 @@
 package picpay.com.br.desafioBackend.controller;
 
-import org.springframework.data.util.Optionals;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import picpay.com.br.desafioBackend.business.UsuarioComum;
+import picpay.com.br.desafioBackend.business.UsuarioLojista;
 import picpay.com.br.desafioBackend.entity.EntityUser;
 import picpay.com.br.desafioBackend.entity.EntityWallet;
 import picpay.com.br.desafioBackend.repository.RepositoryUser;
@@ -19,34 +18,44 @@ import java.util.Optional;
 public class ControllerUser {
     private final RepositoryUser repositoryUser;
     private final RepositoryWallet repositoryWallet;
-    private final UsuarioComum usuarioComum;
 
-    public ControllerUser(RepositoryUser repositoryUser, RepositoryWallet repositoryWallet, UsuarioComum usuarioComum) {
+    public ControllerUser(RepositoryUser repositoryUser, RepositoryWallet repositoryWallet) {
         this.repositoryUser = repositoryUser;
         this.repositoryWallet = repositoryWallet;
-        this.usuarioComum=usuarioComum;
+
     }
 
     @GetMapping
-    Optional<List<EntityUser>> getUsers(@RequestParam(value="cpf", required=false) String cpf){
-        if(cpf==null || cpf.isEmpty()){
+    Optional<List<EntityUser>> getUsers(@RequestParam(value="cpf", required=false) String cpf,
+                                        @RequestParam(value = "cnpj",required=false) String cnpj ){
+        if(cpf!=null){
+            if (! UsuarioComum.validateCpf(cpf)) return Optional.empty();
+            List<EntityUser> users=repositoryUser.findByCpf(UsuarioComum.formatCpf(cpf));
+            return users.isEmpty()?Optional.empty():Optional.of(users);
+        }else if(cnpj!=null) {
+            if (! UsuarioLojista.validateCnpj(cnpj)) return Optional.empty();
+            List<EntityUser> users=repositoryUser.findByCnpj(UsuarioLojista.formatCnpj(cnpj));
+            return users.isEmpty()?Optional.empty():Optional.of(users);
+        }else{
             return Optional.of(repositoryUser.findAll());
         }
-        if (! usuarioComum.validaCpf(cpf)) return Optional.empty();
-        List<EntityUser> users=repositoryUser.findByCpf(cpf);
-        return users.isEmpty()?Optional.empty():Optional.of(users);
-
 
     }
 
     @PostMapping
-    EntityUser postUser(@RequestBody EntityUser user){
+    HttpStatus postUser(@RequestBody EntityUser user){
+        if(UsuarioComum.validateCpf(user.getCpf())){
+            user.setCpf(UsuarioComum.formatCpf(user.getCpf()));
+        }else if(UsuarioLojista.validateCnpj(user.getCnpj())) {
+            user.setCnpj(UsuarioLojista.formatCnpj(user.getCnpj()));
+        }else{
+            return HttpStatus.BAD_REQUEST;
+        }
         EntityUser userObject = repositoryUser.save(user);
         EntityWallet wallet = new EntityWallet();
         wallet.setBalance(0f);
         wallet.setUserId(userObject.getId());
         repositoryWallet.save(wallet);
-        return user;
+        return HttpStatus.CREATED;
     }
-
 }

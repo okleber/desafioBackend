@@ -17,6 +17,8 @@ public class EntityUser {
     @Column(unique = true)
     private String cpf;
     @Column(unique = true)
+    private String cnpj;
+    @Column(unique = true)
     private String mail;
     private String password;
     private String userType;

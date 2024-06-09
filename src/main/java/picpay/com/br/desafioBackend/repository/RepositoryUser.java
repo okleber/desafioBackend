@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface RepositoryUser extends JpaRepository<EntityUser, Integer> {
     List<EntityUser> findByCpf(String cpf);
+
+    List<EntityUser> findByCnpj(String cnpj);
 }
