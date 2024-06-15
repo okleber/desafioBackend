@@ -1,10 +1,16 @@
 package picpay.com.br.desafioBackend.business;
 
-import org.springframework.stereotype.Component;
+import lombok.Getter;
+import org.springframework.stereotype.Service;
+import picpay.com.br.desafioBackend.definitions.EnumUserType;
 import picpay.com.br.desafioBackend.definitions.InterfaceUser;
 
-@Component
+@Service
+@Getter
 public class UsuarioComum implements InterfaceUser {
+    String cpf;
+    String userType = EnumUserType.COMUM.toString();
+
     public float sendMoney(float value, InterfaceUser user) {
         return 0;
     }
@@ -12,15 +18,20 @@ public class UsuarioComum implements InterfaceUser {
         return 0;
     }
 
-    public static String formatCpf(String cpfArg) {
-        // Remove caracteres não numéricos
-        String cpf = cpfArg.replaceAll("[^\\d]", "");
-        return cpf;
+    public boolean setCpf(String cpf){
+        String cpfFormatted = formatCpf(cpf);
+        if(validateCpf(cpfFormatted)){
+            this.cpf=cpfFormatted;
+            return true;
+        }
+        return false;
     }
 
-    public static boolean validateCpf(String cpfArg){
-        // Remove caracteres não numéricos
-        String cpf=UsuarioComum.formatCpf(cpfArg);
+    private String formatCpf(String cpf) {
+        return cpf.replaceAll("[^\\d]", "");
+    }
+
+    private boolean validateCpf(String cpf){
 
         // Verifica se o CPF tem 11 dígitos
         if (cpf.length() != 11) {

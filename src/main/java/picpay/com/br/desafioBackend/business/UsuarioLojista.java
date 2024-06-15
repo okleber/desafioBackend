@@ -1,9 +1,17 @@
 package picpay.com.br.desafioBackend.business;
 
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import picpay.com.br.desafioBackend.definitions.EnumUserType;
 import picpay.com.br.desafioBackend.definitions.InterfaceUser;
-
+@Service
+@Getter
 public class UsuarioLojista implements InterfaceUser {
+
+    String cnpj;
+    String userType = EnumUserType.LOJISTA.toString();
+
     public float sendMoney(float value, InterfaceUser user) {
         return 0;
     }
@@ -11,13 +19,21 @@ public class UsuarioLojista implements InterfaceUser {
         return 0;
     }
 
-    public static String formatCnpj(String cnpjArg) {
-        return cnpjArg.replaceAll("[^\\d]", "");
+    public boolean setCnpj(String cnpj){
+        String cnpjFormatted = formatCnpj(cnpj);
+        if(validateCnpj(cnpjFormatted)){
+            this.cnpj=cnpjFormatted;
+            return true;
+        }
+        return false;
     }
 
-    public static boolean validateCnpj(String cnpjArg) {
-        String cnpj=UsuarioLojista.formatCnpj(cnpjArg);
-        // Check if the CNPJ has exactly 14 digits
+    private static String formatCnpj(String cnpj) {
+
+        return cnpj.replaceAll("[^\\d]", "");
+    }
+
+    private static boolean validateCnpj(String cnpj) {
         if (cnpj.length() != 14) {
             return false;
         }
