@@ -31,11 +31,12 @@ public class ControllerUser {
 
     @GetMapping
     Optional<List<EntityUser>> getUsers(@RequestParam(value="cpf", required=false) String cpf,
-                                        @RequestParam(value = "cnpj",required=false) String cnpj ){
+                                        @RequestParam(value = "cnpj",required=false) String cnpj,
+                                        @RequestParam(value="user_type", required=false) String userType){
         List<EntityUser> users;
         if(cpf!=null){
             if (! usuarioComum.setCpf(cpf)) return Optional.empty();
-            users=repositoryUser.findByCpf(usuarioComum.getCpf());
+            users.add(repositoryUser.findByCpf(usuarioComum.getCpf()));
         }else if(cnpj!=null) {
             if (! usuarioLojista.setCnpj(cnpj)) return Optional.empty();
             users=repositoryUser.findByCnpj(usuarioLojista.getCnpj());
